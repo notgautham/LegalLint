@@ -1,27 +1,33 @@
-"use client"
-import { useState } from "react"
-import { motion } from "framer-motion"
+"use client";
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 export default function InputForm() {
-  const [terms, setTerms] = useState("")
+  const [terms, setTerms] = useState("");
+  const [clicked, setClicked] = useState(false);
 
-  // Button to read text from user’s clipboard
   const handlePasteClipboard = async () => {
     try {
-      const text = await navigator.clipboard.readText()
-      setTerms(text)
+      const text = await navigator.clipboard.readText();
+      setTerms(text);
     } catch (err) {
-      alert("Unable to read clipboard. Please allow permissions or copy something first.")
+      alert("Clipboard access denied. Please allow permissions or copy text first.");
     }
-  }
+  };
+
+  const handleClear = () => {
+    setTerms("");
+  };
 
   const handleAnalyze = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (terms.trim()) {
-      // TODO: call your analyze function / pass to backend
-      console.log("Analyzing T&C:", terms)
+      console.log("Analyzing T&C:", terms);
+      setClicked(true);
+      setTimeout(() => setClicked(false), 150); // reset scale after brief moment
     }
-  }
+  };
 
   return (
     <motion.form
@@ -29,47 +35,68 @@ export default function InputForm() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1.2, ease: "easeOut" }}
-      className="w-full max-w-3xl p-6 rounded-2xl bg-white/10 backdrop-blur-md 
-                 shadow-xl border border-white/20 flex flex-col gap-5"
+      className="w-full max-w-3xl p-6 rounded-2xl bg-white/5 backdrop-blur-[2px] 
+                 border border-white/10 shadow-lg flex flex-col gap-5"
     >
       <label className="text-base font-semibold text-white">
         Paste Terms & Conditions
       </label>
-      <div className="flex gap-2">
+
+      {/* Textarea with Top Bar Controls */}
+      <div className="relative rounded-md bg-white/10 border border-white/10">
+        {/* Top bar with Paste/Clear buttons and placeholder */}
+        <div className="flex justify-between items-center px-4 pt-2">
+          <span className="text-white/50 text-sm">
+            Paste the agreement text below...
+          </span>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={handlePasteClipboard}
+              className="text-xs bg-white/10 border border-white/20 
+                         text-white px-2 py-1 rounded-md hover:bg-white/20 transition-all"
+            >
+              Paste
+            </button>
+            <button
+              type="button"
+              onClick={handleClear}
+              className="text-xs bg-white/10 border border-white/20 
+                         text-white px-2 py-1 rounded-md hover:bg-white/20 transition-all"
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+
+        {/* Textarea */}
         <textarea
           value={terms}
           onChange={(e) => setTerms(e.target.value)}
-          placeholder="Paste the agreement text here..."
           rows={8}
-          className="w-full px-4 py-3 rounded-md bg-white/10 text-white 
-                     placeholder-white/50 border border-white/20 
-                     outline-none focus:ring-2 focus:ring-violet-500 
-                     transition resize-none"
+          className={cn(
+            "w-full px-4 pb-3 pt-2 mt-1 text-white bg-transparent",
+            "placeholder-white/50 border-none resize-none",
+            "outline-none focus:outline-none focus:ring-0 transition-all"
+          )}
         />
-        {/* Button to paste from clipboard */}
-        <button
-          type="button"
-          onClick={handlePasteClipboard}
-          className="px-4 py-2 h-fit self-start mt-1 
-                     bg-violet-600 text-white font-medium rounded-md 
-                     hover:brightness-110 transition-all"
-        >
-          Paste
-        </button>
+
       </div>
 
-      {/* Analyze button */}
+      {/* Animated Analyze Button */}
       <motion.button
         type="submit"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className="mt-4 py-3 px-6 
-                   bg-gradient-to-r from-purple-600 to-violet-500 
-                   text-white font-semibold rounded-lg 
-                   shadow-lg hover:brightness-110 transition-all"
+        whileTap={{ scale: 1.03 }}
+        animate={clicked ? { scale: 1.03 } : { scale: 1 }}
+        transition={{ type: "spring", stiffness: 400, damping: 20 }}
+        className="mt-4 py-3 px-6 rounded-lg font-semibold text-white relative 
+                   bg-gradient-to-r from-purple-600 to-violet-500 overflow-hidden
+                   before:absolute before:inset-0 before:bg-gradient-to-r before:from-purple-400 before:to-violet-600 
+                   before:opacity-0 before:transition-opacity before:duration-500 
+                   hover:before:opacity-100"
       >
-        Analyze
+        <span className="relative z-10">Analyze</span>
       </motion.button>
     </motion.form>
-  )
+  );
 }
