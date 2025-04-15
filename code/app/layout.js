@@ -1,26 +1,36 @@
-import "./globals.css";
-import { Inter } from "next/font/google";
-import { BackgroundBeams } from "@/components/background-beams";
+import "./globals.css"
+import { IBM_Plex_Sans } from "next/font/google"
+import { DotBackground } from "@/components/DotBG"
+import { Spotlight } from "@/components/spotlight"
+import InputForm from "@/components/InputForm"
 
-const inter = Inter({ subsets: ["latin"] });
+const ibm = IBM_Plex_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-ibm"
+})
 
 export const metadata = {
-  title: "LegalLint",
-};
+  title: "LegalLint"
+}
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body
-        className={`${inter.className} relative min-h-screen w-full overflow-hidden bg-neutral-950`}
-      >
-        {/* NEW: Aceternity background beams covering the entire screen */}
-        <BackgroundBeams />
+    <html lang="en" className={ibm.variable}>
+      <body className={`${ibm.className} relative min-h-screen overflow-x-hidden bg-neutral-950`}>
 
-        <div className="relative z-10 flex flex-col items-center justify-center min-h-screen">
-          {children}
-        </div>
+        {/* Background layers (behind everything) */}
+        <DotBackground /> 
+        <Spotlight />
+        <section className="relative h-screen flex items-center justify-center">
+          <h1 className="text-5xl md:text-7xl font-extrabold text-center text-white drop-shadow-lg">
+            LegalLint
+          </h1>
+        </section>
+        <section className="relative h-screen flex items-start justify-center pt-18">
+  <InputForm />
+        </section>
       </body>
     </html>
-  );
+  )
 }

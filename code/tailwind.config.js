@@ -30,6 +30,9 @@ module.exports = {
       backgroundSize: {
         gradient: "200% 200%",
       },
+      fontFamily: {
+        title: ['var(--font-anton)', 'sans-serif'],
+      },
     },
   },
   plugins: [],
