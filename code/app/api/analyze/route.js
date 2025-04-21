@@ -14,42 +14,52 @@ export async function POST(req) {
   }
 
   const prompt = `
-You are a legal policy analyzer AI. Your job is to read Terms and Conditions and return a JSON object with:
+  You are a legal policy analyzer AI. Analyze the following Terms and Conditions and return a JSON object with:
 
-1. "summary": Concise summary of the agreement (2-3 lines).
-2. "scores": Rate each category from 1 (Very Risky) to 5 (Safe), with a short explanation for each:
-    - privacy
-    - data_sharing
-    - cancellation
-    - user_rights
-    - amendments
-3. "suspicious_flags": List of risky or aggressive clauses (e.g., "no refunds", "we may share your data with third parties").
-4. "aggressive_language": Legal phrases that imply power imbalance or lack of consent (e.g., "non-revocable", "perpetual").
-5. "risk_level": One of: Low, Medium, High — based on the lowest scoring categories.
-6. "recommendation": One line advice to the user: ("Safe to accept", "Proceed with caution", "Seek legal help").
+  1. "summary": 2–3 sentence overview of the agreement.
+  2. "scores": Rate 1 (Very Risky) to 5 (Safe), and explain:
+      - privacy
+      - data_sharing
+      - cancellation
+      - user_rights
+      - amendments
+  3. "suspicious_flags": List of objects with:
+      - "issue": name of the concern
+      - "clause": exact sentence/quote from the T&C
+  4. "aggressive_language": Legal terms like "perpetual", "non-revocable", "sole discretion"
+  5. "clarity_score": Rate 1–5 and comment on how readable and understandable the T&C is for an average user
+  6. "risk_level": One of: Low, Medium, High
+  7. "recommendation": 1-line advice like "Safe to accept", "Proceed with caution", or "Seek legal advice"
 
-Return ONLY a valid JSON in this format:
+  Strictly return only valid JSON in this format:
 
-{
-  "summary": "string",
-  "scores": {
-    "privacy": { "score": 4, "comment": "..." },
-    "data_sharing": { "score": 3, "comment": "..." },
-    "cancellation": { "score": 2, "comment": "..." },
-    "user_rights": { "score": 1, "comment": "..." },
-    "amendments": { "score": 3, "comment": "..." }
-  },
-  "suspicious_flags": ["...", "..."],
-  "aggressive_language": ["...", "..."],
-  "risk_level": "Medium",
-  "recommendation": "Proceed with caution"
-}
+  {
+    "summary": "...",
+    "scores": {
+      "privacy": { "score": 4, "comment": "..." },
+      ...
+    },
+    "suspicious_flags": [
+      {
+        "issue": "...",
+        "clause": "..."
+      }
+    ],
+    "aggressive_language": ["...", "..."],
+    "clarity_score": {
+      "score": 4,
+      "comment": "..."
+    },
+    "risk_level": "Medium",
+    "recommendation": "..."
+  }
 
-Now analyze the following T&C and return only that JSON:
+  Now analyze the following T&C and return only that JSON.
 
-T&C Document:
-"""${text}"""
+  T&C Document:
+  """${text}"""
 `;
+
 
   try {
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
