@@ -20,14 +20,29 @@ export default function InputForm() {
     setTerms("");
   };
 
-  const handleAnalyze = (e) => {
+  const handleAnalyze = async (e) => {
     e.preventDefault();
-    if (terms.trim()) {
-      console.log("Analyzing T&C:", terms);
-      setClicked(true);
-      setTimeout(() => setClicked(false), 150); // reset scale after brief moment
+    if (!terms.trim()) return;
+  
+    setClicked(true);
+  
+    try {
+      const res = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: terms })
+      });
+  
+      const result = await res.json();
+      console.log("Result:", result);
+      // TODO: show results in a modal or section
+    } catch (err) {
+      console.error("Error during analysis:", err);
+    } finally {
+      setClicked(false);
     }
   };
+  
 
   return (
     <motion.form
