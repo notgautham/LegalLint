@@ -3,7 +3,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-export default function InputForm() {
+export default function InputForm({ onAnalyze }) {
   const [terms, setTerms] = useState("");
   const [clicked, setClicked] = useState(false);
 
@@ -20,28 +20,18 @@ export default function InputForm() {
     setTerms("");
   };
 
-  const handleAnalyze = async (e) => {
+  const handleAnalyze = (e) => {
     e.preventDefault();
     if (!terms.trim()) return;
   
-    setClicked(true);
-  
-    try {
-      const res = await fetch("/api/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: terms })
-      });
-  
-      const result = await res.json();
-      console.log("Result:", result);
-      // TODO: show results in a modal or section
-    } catch (err) {
-      console.error("Error during analysis:", err);
-    } finally {
-      setClicked(false);
+    if (typeof onAnalyze === "function") {
+      onAnalyze({ terms });
     }
+  
+    setClicked(true);
+    setTimeout(() => setClicked(false), 150);
   };
+  
   
 
   return (

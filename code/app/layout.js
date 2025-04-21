@@ -2,7 +2,7 @@ import "./globals.css"
 import { IBM_Plex_Sans } from "next/font/google"
 import { DotBackground } from "@/components/DotBG"
 import { Spotlight } from "@/components/spotlight"
-import InputForm from "@/components/InputForm"
+import Analyzer from "@/components/Analyzer"
 import ScrollBlurOverlay from "@/components/ScrollBlurOverlay" // ✅
 
 const ibm = IBM_Plex_Sans({
@@ -27,11 +27,9 @@ export default function RootLayout({ children }) {
               LegalLint
             </h1>
           </section>
-          <section className="relative h-screen flex items-center justify-center pt-8">
-            <InputForm />
+          <section className="relative min-h-screen pt-8">
+            <Analyzer />
           </section>
-        
-        
       </body>
     </html>
   )
