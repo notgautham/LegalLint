@@ -17,6 +17,7 @@ export default function Analyzer() {
       });
 
       const data = await res.json();
+      console.log('✅ API Response:', data);
       setResult(data);
     } catch (err) {
       console.error("❌ Failed to fetch LLM result:", err);
