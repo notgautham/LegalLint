@@ -70,7 +70,7 @@ export default function GlowingOutput({ result }) {
       : "None detected";
 
   return (
-    <div className="w-[41%] max-w-6xl mx-auto">
+    <div className="w-[41%] max-w-6xl mx-auto pb-20">
       <ul className="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 auto-rows-auto">
         {/* ------- All Risk Scores (spans 3 columns) ------- */}
         <li className="lg:col-span-3">
