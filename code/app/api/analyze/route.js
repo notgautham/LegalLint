@@ -79,6 +79,14 @@ export async function POST(req) {
   Now, analyze the following Terms and Conditions and return only the JSON object in the exact format above.  
   Do not include any explanations, markdown, or introductory sentences. Respond with valid JSON only.
 
+  Your "risk_level" must be one of: Low, Medium, High  
+  Choose the matching "recommendation":  
+  • Low  → "Safe to accept"  
+  • Medium → "Proceed with caution"  
+  • High → "Seek legal advice"  
+  Return only the JSON object—no extra text.
+
+
 ⚠️ Important Instructions:
 - Respond with a **single valid JSON object** only.
 - Do NOT wrap your response in markdown or triple backticks.
