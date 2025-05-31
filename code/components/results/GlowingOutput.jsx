@@ -6,15 +6,16 @@ import {
   Shield,
   AlertTriangle,
   BadgeAlert,
+  AlertCircle
 } from "lucide-react";
 
-/* ---------- generic CardShell ---------- */
+/* ---------- generic CardShell (hover glow + slight scale) ---------- */
 const CardShell = ({ children, accentClass = "", className = "" }) => (
   <div
-    className={`relative rounded-2xl border p-2 md:rounded-3xl md:p-3 ${accentClass} ${className}`}
+    className={`relative rounded-2xl border p-2 md:rounded-3xl md:p-3 transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-violet-500/20 ${accentClass} ${className}`}
   >
     <GlowingEffect spread={40} glow disabled={false} proximity={64} />
-    <div className="relative flex flex-col h-full p-5 gap-4 overflow-auto">
+    <div className="relative flex flex-col h-full p-6 gap-4 overflow-auto">
       {children}
     </div>
   </div>
@@ -38,7 +39,8 @@ const ScoreBar = ({ label, obj }) => {
           style={{ width: `${pct}%` }}
         />
       </div>
-      <p className="text-xs text-neutral-400">{obj.comment}</p>
+      {/* ⬇ bigger, clearer comment */}
+      <p className="text-sm leading-snug text-neutral-300">{obj.comment}</p>
     </div>
   );
 };
@@ -79,7 +81,7 @@ export default function GlowingOutput({ result }) {
               <Shield className="h-5 w-5 text-violet-400" />
               <h3 className="text-2xl font-bold text-white">All Risk Scores</h3>
             </div>
-            <div className="mt-4 space-y-5">
+            <div className="mt-4 space-y-6">
               <ScoreBar label="Privacy" obj={scores.privacy} />
               <ScoreBar label="Data Sharing" obj={scores.data_sharing} />
               <ScoreBar label="Cancellation" obj={scores.cancellation} />
@@ -90,32 +92,36 @@ export default function GlowingOutput({ result }) {
           </CardShell>
         </li>
 
-        {/* ------- Left column: two equal-height cards ------- */}
+        {/* ------- Left column: Aggressive + Summary ------- */}
         <li className="sm:col-span-2 lg:col-span-1 flex h-full">
           <div className="flex flex-col w-full h-full gap-5">
-            {/* Aggressive Language card */}
+            {/* Aggressive Language */}
             <CardShell className="flex-1">
               <div className="flex items-center gap-3">
-                <Flame className="h-5 w-5 text-neutral-300" />
+                <Flame className="h-5 w-5 text-neutral-200" />
                 <h3 className="text-xl font-semibold text-white">
                   Aggressive Language
                 </h3>
               </div>
-              <p className="mt-3 text-sm text-neutral-400 flex-1">{aggText}</p>
+              <p className="mt-3 text-base leading-relaxed text-neutral-300 flex-1">
+                {aggText}
+              </p>
             </CardShell>
 
-            {/* Summary card */}
+            {/* Summary */}
             <CardShell className="flex-1">
               <div className="flex items-center gap-3">
-                <FileText className="h-5 w-5 text-neutral-300" />
+                <FileText className="h-5 w-5 text-neutral-200" />
                 <h3 className="text-xl font-semibold text-white">Summary</h3>
               </div>
-              <p className="mt-3 text-sm text-neutral-400 flex-1">{summary}</p>
+              <p className="mt-3 text-base leading-relaxed text-neutral-300 flex-1">
+                {summary}
+              </p>
             </CardShell>
           </div>
         </li>
 
-        {/* ------- Suspicious Clauses (spans 2 columns, stretches full height) ------- */}
+        {/* ------- Suspicious Clauses (spans 2) ------- */}
         <li className="sm:col-span-2 lg:col-span-2">
           <CardShell className="h-full">
             <div className="flex items-center gap-3">
@@ -124,22 +130,29 @@ export default function GlowingOutput({ result }) {
                 Suspicious Clauses
               </h3>
             </div>
-            <ul className="mt-4 space-y-4 text-sm text-neutral-400 list-disc list-inside">
+
+            <ul className="mt-4 space-y-5 text-base leading-relaxed text-neutral-300">
               {suspicious_flags.length ? (
                 suspicious_flags.map((f, idx) => (
-                  <li key={idx}>
-                    <span className="font-medium">{f.issue}:</span>{" "}
-                    <span className="italic">“{f.clause}”</span>
+                  <li key={idx} className="flex items-start gap-2">
+                    <AlertCircle className="mt-1 h-4 w-4 text-yellow-400 shrink-0" />
+                    <div>
+                      <span className="font-bold text-white">{f.issue}:</span>{" "}
+                      <span className="italic text-violet-300">“{f.clause}”</span>
+                    </div>
                   </li>
                 ))
               ) : (
-                <li>None flagged</li>
+                <li className="flex items-start gap-2">
+                  <AlertCircle className="mt-1 h-4 w-4 text-neutral-500 shrink-0" />
+                  <span>No suspicious clauses flagged.</span>
+                </li>
               )}
             </ul>
           </CardShell>
         </li>
 
-        {/* ------- Final Verdict (spans 3 columns) ------- */}
+        {/* ------- Final Verdict ------- */}
         <li className="lg:col-span-3">
           <CardShell
             accentClass={verdictAccent[risk_level] || verdictAccent.Medium}
