@@ -16,28 +16,88 @@ export async function POST(req) {
 
   // 🚩 3  Prompt (ends with strict JSON-only instruction)
   const prompt = `
-You are a legal policy analyzer AI. Analyze the following Terms and Conditions and return a JSON object with:
+  You are a legal policy analyzer AI. Analyze the following Terms and Conditions and return ONLY a valid JSON object with the structure below. Be direct, critical, and professional.
 
-1. "summary": 2–3 sentence overview of the agreement.
-2. "scores": Rate 1 (Very Risky) to 5 (Safe), and explain:
-    - privacy
-    - data_sharing
-    - cancellation
-    - user_rights
-    - amendments
-3. "suspicious_flags": List of objects with:
-    - "issue": name of the concern
-    - "clause": exact sentence/quote from the T&C
-4. "aggressive_language": Legal terms like "perpetual", "non-revocable", "sole discretion"
-5. "clarity_score": Rate 1–5 and comment on readability for an average user
-6. "risk_level": One of: Low, Medium, High
-7. "recommendation": 1-line advice like "Safe to accept", "Proceed with caution", or "Seek legal advice"
+  Required JSON fields:
 
-Strictly return **only** valid JSON in this exact structure—no explanations, markdown, or back-ticks.
+  1. "summary": 2–3 sentence overview of the agreement.
+  2. "scores": Rate 1 (Very Risky) to 5 (Safe) for each topic. Also provide a short explanation for each score:
+      - privacy
+      - data_sharing
+      - cancellation
+      - user_rights
+      - amendments
+  3. "suspicious_flags": A list of concerning clauses in the following format:
+      - "issue": Brief label of the concern
+      - "clause": Exact sentence or excerpt from the T&C
+    Include items related to:
+      - vague or sweeping permissions
+      - unclear data retention
+      - broad liability waivers
+      - aggressive or one-sided terms
+  4. "aggressive_language": List of phrases like "perpetual", "non-revocable", "sole discretion", etc.
+  5. "clarity_score": A JSON object with:
+      - "score": integer (1 to 5)
+      - "comment": One-line explanation of how readable/understandable the agreement is
+  6. "risk_level": One of: Low, Medium, High
+  7. "recommendation": One-line conclusion like "Safe to accept", "Proceed with caution", or "Seek legal advice"
 
-T&C Document:
-"""${text}"""
-`;
+  ---
+
+  Example:
+
+  {
+    "summary": "The agreement grants the platform wide rights over user data and content. It includes automatic renewals and liability waivers.",
+    "scores": {
+      "privacy": { "score": 2, "comment": "User data is collected and shared with third parties with limited user control." },
+      "data_sharing": { "score": 2, "comment": "No opt-out provided for partner data sharing." },
+      "cancellation": { "score": 3, "comment": "Account deletion is allowed but with retained data for up to 180 days." },
+      "user_rights": { "score": 3, "comment": "Users retain content ownership, but grant broad licenses." },
+      "amendments": { "score": 2, "comment": "The platform can modify terms unilaterally without prior notice." }
+    },
+    "suspicious_flags": [
+      {
+        "issue": "Unilateral amendments",
+        "clause": "We may update these terms at any time without notifying users."
+      },
+      {
+        "issue": "Broad data sharing",
+        "clause": "We may share your information with selected partners and affiliates."
+      }
+    ],
+    "aggressive_language": ["perpetual", "non-revocable", "sole discretion"],
+    "clarity_score": {
+      "score": 3,
+      "comment": "Some clauses are complex and filled with legal jargon."
+    },
+    "risk_level": "Medium",
+    "recommendation": "Proceed with caution"
+  }
+
+  ---
+
+  Now, analyze the following Terms and Conditions and return only the JSON object in the exact format above.  
+  Do not include any explanations, markdown, or introductory sentences. Respond with valid JSON only.
+
+  Your "risk_level" must be one of: Low, Medium, High  
+  Choose the matching "recommendation":  
+  • Low  → "Safe to accept"  
+  • Medium → "Proceed with caution"  
+  • High → "Seek legal advice"  
+  Return only the JSON object—no extra text.
+
+
+⚠️ Important Instructions:
+- Respond with a **single valid JSON object** only.
+- Do NOT wrap your response in markdown or triple backticks.
+- Do NOT include any explanation, labels, or extra text.
+- Do NOT nest the JSON inside another object (e.g., inside "summary").
+- Output must start with { and end with }.
+
+
+  T&C Document:
+  """${text}"""
+  `;
 
   try {
     // 🚩 4  Call OpenRouter
