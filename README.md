@@ -56,6 +56,14 @@ Whether you're signing up for a service or reviewing a license, **LegalLint help
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
 
 
+## 🖼️ Demo
+
+<img src="images/demo.gif">
+
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
+
+
+
 ## 🧠 AI Output Format
 
 LegalLint returns structured, readable JSON that captures the essence of the legal document.  
@@ -87,14 +95,6 @@ Here is an example of the format:
 }
 
 ```
-
-<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
-
-
-
-## 🖼️ Demo
-
-<img src="images/demo.gif">
 
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
 
